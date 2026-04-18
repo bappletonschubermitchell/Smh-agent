@@ -4,173 +4,80 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SMH Field Agent</title>
-<!--
-  ============================================================
-  SMH FIELD AGENT — Schuber Mitchell Homes
-  ============================================================
-  SETUP INSTRUCTIONS:
-  1. Save this file to your phone or computer
-  2. Open it in Safari, Chrome, or Edge (NOT inside Claude)
-  3. Click "Get Login Code" and sign in with your Microsoft account
-  4. That's it — ask away!
-  ============================================================
--->
+<title>SMH Field Agent — Demo</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
-  :root {
-    --rust:#C94A2B; --rust-dark:#9E3720; --steel:#1C2B3A; --steel-mid:#243447;
-    --sand:#E8DCC8; --sand-light:#F5F0E8; --chalk:#F9F6F0;
-    --text:#1C2B3A; --muted:#6B7F8F; --border:rgba(28,43,58,0.12);
-  }
+  :root { --rust:#C94A2B; --rust-dark:#9E3720; --steel:#1C2B3A; --steel-mid:#243447; --sand:#E8DCC8; --sand-light:#F5F0E8; --chalk:#F9F6F0; --text:#1C2B3A; --muted:#6B7F8F; --border:rgba(28,43,58,0.12); }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{font-family:'DM Sans',sans-serif;background:var(--chalk);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
-  header{background:var(--steel);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--rust);flex-shrink:0;}
+  header{background:var(--steel);padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--rust);flex-shrink:0;}
   .logo{display:flex;align-items:center;gap:12px;}
   .logo-mark{width:36px;height:36px;background:var(--rust);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:18px;color:white;}
   .logo-text{font-family:'Bebas Neue',sans-serif;font-size:22px;color:white;letter-spacing:2px;}
   .logo-sub{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
-  .header-right{display:flex;align-items:center;gap:16px;}
+  .demo-badge{background:#D97706;color:white;font-size:10px;font-weight:700;padding:3px 8px;letter-spacing:1px;text-transform:uppercase;font-family:'DM Mono',monospace;}
+  .header-right{display:flex;align-items:center;gap:12px;}
   #auth-status{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sand);font-family:'DM Mono',monospace;}
-  .status-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);transition:background 0.3s;}
-  .status-dot.connected{background:#4CAF50;box-shadow:0 0 6px #4CAF5088;}
-  #login-btn{background:var(--rust);color:white;border:none;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.2s;}
-  #login-btn:hover{background:var(--rust-dark);}
-  #login-btn:disabled{background:var(--muted);cursor:default;}
+  .status-dot{width:8px;height:8px;border-radius:50%;background:#FFA500;box-shadow:0 0 6px #FFA50088;}
   .main{flex:1;display:flex;overflow:hidden;max-height:calc(100vh - 60px);}
-  .sidebar{width:260px;background:var(--steel-mid);border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
-  .sidebar-section{padding:20px 16px 12px;}
-  .sidebar-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;font-weight:500;}
-  .quick-btn{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:var(--sand);padding:10px 14px;text-align:left;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;margin-bottom:6px;transition:all 0.15s;line-height:1.4;}
+  .sidebar{width:255px;background:var(--steel-mid);border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
+  .sidebar-section{padding:16px 14px 10px;}
+  .sidebar-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:500;}
+  .quick-btn{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:var(--sand);padding:9px 12px;text-align:left;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;margin-bottom:5px;transition:all 0.15s;line-height:1.4;}
   .quick-btn:hover{background:rgba(201,74,43,0.2);border-color:var(--rust);color:white;}
-  .q-icon{margin-right:8px;}
-  .divider{height:1px;background:rgba(255,255,255,0.06);margin:4px 16px;}
+  .q-icon{margin-right:7px;}
+  .divider{height:1px;background:rgba(255,255,255,0.06);margin:4px 14px;}
+  .lot-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:4px;}
+  .lot-btn{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:var(--sand);padding:7px 6px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all 0.15s;text-align:center;}
+  .lot-btn:hover{background:rgba(201,74,43,0.25);border-color:var(--rust);color:white;}
   .chat-area{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-  #messages{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:16px;}
-  .welcome{margin:auto;text-align:center;max-width:480px;padding:40px 20px;}
-  .welcome-icon{font-size:48px;margin-bottom:16px;}
-  .welcome h2{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:var(--steel);margin-bottom:8px;}
-  .welcome p{color:var(--muted);font-size:15px;line-height:1.6;margin-bottom:24px;}
-  .welcome-chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
-  .chip{background:white;border:1px solid var(--border);padding:8px 14px;font-size:13px;color:var(--steel);cursor:pointer;transition:all 0.15s;}
+  #messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px;}
+  .welcome{margin:auto;text-align:center;max-width:520px;padding:32px 20px;}
+  .welcome-icon{font-size:44px;margin-bottom:12px;}
+  .welcome h2{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:2px;color:var(--steel);margin-bottom:6px;}
+  .welcome p{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:12px;}
+  .demo-note{background:#FFF8E6;border:1px solid #F5D87A;border-left:3px solid #D97706;padding:10px 14px;font-size:12px;color:#7C4A00;text-align:left;margin-bottom:16px;line-height:1.5;}
+  .welcome-chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;}
+  .chip{background:white;border:1px solid var(--border);padding:7px 13px;font-size:12px;color:var(--steel);cursor:pointer;transition:all 0.15s;}
   .chip:hover{border-color:var(--rust);color:var(--rust);}
-  .msg{display:flex;gap:12px;max-width:780px;animation:fadeUp 0.25s ease;}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .msg{display:flex;gap:10px;max-width:820px;animation:fadeUp 0.25s ease;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
   .msg.user{align-self:flex-end;flex-direction:row-reverse;}
-  .msg-avatar{width:32px;height:32px;border-radius:2px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1px;}
+  .msg-avatar{width:30px;height:30px;border-radius:2px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:1px;}
   .msg.agent .msg-avatar{background:var(--steel);color:var(--rust);}
   .msg.user .msg-avatar{background:var(--rust);color:white;}
-  .msg-bubble{padding:12px 16px;font-size:14px;line-height:1.65;max-width:640px;}
+  .msg-bubble{padding:11px 15px;font-size:13.5px;line-height:1.65;max-width:700px;}
   .msg.agent .msg-bubble{background:white;border:1px solid var(--border);border-left:3px solid var(--rust);}
   .msg.user .msg-bubble{background:var(--steel);color:var(--sand-light);}
   .msg-bubble strong{color:var(--rust);font-weight:600;}
-  .data-table{width:100%;border-collapse:collapse;margin-top:10px;font-family:'DM Mono',monospace;font-size:12px;}
-  .data-table th{background:var(--sand);padding:6px 10px;text-align:left;font-weight:500;color:var(--muted);text-transform:uppercase;font-size:10px;}
-  .data-table td{padding:7px 10px;border-bottom:1px solid var(--border);}
-  .data-table tr:last-child td{border-bottom:none;}
-  .typing{display:flex;gap:4px;align-items:center;padding:14px 16px;background:white;border:1px solid var(--border);border-left:3px solid var(--rust);width:fit-content;}
+  .msg-bubble em{color:var(--muted);font-style:normal;font-size:12px;}
+  .t{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px;}
+  .t th{background:var(--sand);padding:6px 10px;text-align:left;font-weight:600;color:var(--muted);text-transform:uppercase;font-size:10px;letter-spacing:0.8px;}
+  .t td{padding:7px 10px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;}
+  .t tr:last-child td{border-bottom:none;}
+  .t tr:hover td{background:var(--sand-light);}
+  .pill{display:inline-block;padding:2px 7px;font-size:10px;font-weight:700;font-family:'DM Mono',monospace;}
+  .p-green{background:#E6F4EA;color:#1B7E3A;}
+  .p-orange{background:#FFF3E0;color:#8A4500;}
+  .p-blue{background:#EDF5FF;color:#1E3A8A;}
+  .p-gray{background:#F0F0F0;color:#555;}
+  .p-red{background:#FFF0ED;color:#9E3720;}
+  .p-yellow{background:#FFFBEA;color:#7A5800;}
+  .sh{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:12px 0 5px;padding-bottom:4px;border-bottom:1px solid var(--border);}
+  .typing{display:flex;gap:4px;align-items:center;padding:12px 15px;background:white;border:1px solid var(--border);border-left:3px solid var(--rust);width:fit-content;}
   .typing span{width:6px;height:6px;background:var(--rust);border-radius:50%;animation:bounce 1.2s infinite;opacity:0.6;}
   .typing span:nth-child(2){animation-delay:0.2s}.typing span:nth-child(3){animation-delay:0.4s}
   @keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:0.6}30%{transform:translateY(-5px);opacity:1}}
-  .input-bar{border-top:1px solid var(--border);background:white;padding:16px 24px;display:flex;gap:12px;align-items:flex-end;}
-  #chat-input{flex:1;border:1px solid var(--border);background:var(--chalk);padding:12px 16px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);resize:none;outline:none;min-height:46px;max-height:120px;transition:border-color 0.2s;}
+  .input-bar{border-top:1px solid var(--border);background:white;padding:14px 20px;display:flex;gap:10px;align-items:flex-end;}
+  #chat-input{flex:1;border:1px solid var(--border);background:var(--chalk);padding:11px 15px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);resize:none;outline:none;min-height:44px;max-height:120px;transition:border-color 0.2s;}
   #chat-input:focus{border-color:var(--rust);}
   #chat-input::placeholder{color:var(--muted);}
-  #send-btn{background:var(--rust);color:white;border:none;width:46px;height:46px;cursor:pointer;font-size:18px;transition:background 0.2s;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  #send-btn{background:var(--rust);color:white;border:none;width:44px;height:44px;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.2s;}
   #send-btn:hover{background:var(--rust-dark);}
-  .modal-overlay{position:fixed;inset:0;background:rgba(28,43,58,0.85);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px);}
-  .modal-overlay.hidden{display:none;}
-  .modal{background:white;width:460px;max-width:95vw;border-top:4px solid var(--rust);padding:32px;}
-  .modal h3{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--steel);margin-bottom:8px;}
-  .modal p{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5;}
-  .code-box{background:var(--steel);padding:20px;text-align:center;margin:16px 0;}
-  .code-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
-  .code-value{font-family:'DM Mono',monospace;font-size:32px;font-weight:500;color:white;letter-spacing:6px;}
-  .code-url{font-size:12px;color:var(--sand);margin-top:8px;}
-  .code-url a{color:#FF8A6E;text-decoration:none;font-weight:600;}
-  .step-list{list-style:none;margin:0 0 16px;}
-  .step-list li{font-size:13px;color:var(--text);padding:7px 0;display:flex;align-items:flex-start;gap:10px;border-bottom:1px solid var(--border);line-height:1.4;}
-  .step-list li:last-child{border-bottom:none;}
-  .step-num{background:var(--rust);color:white;width:20px;height:20px;border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
-  .modal-actions{display:flex;gap:10px;margin-top:16px;}
-  .btn-primary{flex:1;background:var(--rust);color:white;border:none;padding:12px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:background 0.2s;}
-  .btn-primary:hover{background:var(--rust-dark);}
-  .btn-primary:disabled{background:var(--muted);cursor:default;}
-  .btn-secondary{background:transparent;color:var(--muted);border:1px solid var(--border);padding:12px 20px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;}
-  .error-banner{background:#FFF0ED;border-left:3px solid var(--rust);padding:10px 14px;font-size:13px;color:var(--rust-dark);margin-top:10px;display:none;}
-  .info-banner{background:#EDF5FF;border-left:3px solid #2563EB;padding:10px 14px;font-size:13px;color:#1E3A5F;margin-top:10px;display:none;line-height:1.5;}
-  .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(30,58,95,0.3);border-top-color:#2563EB;border-radius:50%;animation:spin 0.8s linear infinite;margin-right:6px;vertical-align:middle;}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  /* Sandbox warning banner */
-  .sandbox-warning{background:#FFF8E6;border:1px solid #F5D87A;border-left:3px solid #D97706;padding:16px 20px;font-size:13px;color:#7C4A00;line-height:1.6;}
-  .sandbox-warning strong{display:block;font-size:15px;margin-bottom:6px;}
-  .sandbox-warning ol{margin:8px 0 0 18px;}
-  .sandbox-warning li{margin-bottom:4px;}
   ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:var(--border);}
 </style>
 </head>
 <body>
-
-<!-- SANDBOX WARNING — shown only when running inside an iframe -->
-
-<div class="sandbox-warning" id="sandbox-warn" style="display:none">
-  <strong>⚠️ Open this file in a real browser tab to connect to D365</strong>
-  This app is currently running inside Claude's sandbox, which blocks connections to Microsoft.
-  To use it with live data:
-  <ol>
-    <li>Tap the <strong>⋯</strong> menu (top right of this artifact) → <strong>Download</strong></li>
-    <li>Open the downloaded <strong>smh-agent.html</strong> file in Safari or Chrome</li>
-    <li>Sign in and use it from there</li>
-  </ol>
-  You can still use the chat below without connecting — it will answer general construction questions.
-</div>
-
-<!-- MODAL STEP 1 -->
-
-<div class="modal-overlay hidden" id="modal-step1">
-  <div class="modal">
-    <h3>Connect to SMH</h3>
-    <p>We'll get a short one-time code from Microsoft. You enter it on Microsoft's website — no passwords typed here, works on any device.</p>
-    <ul class="step-list">
-      <li><span class="step-num">1</span>Click "Get Login Code" — takes 2 seconds</li>
-      <li><span class="step-num">2</span>A code + link appear below</li>
-      <li><span class="step-num">3</span>Open the link, enter the code, sign in as <strong>bappleton@schubermitchell.com</strong></li>
-      <li><span class="step-num">4</span>Come back here — connects automatically ✓</li>
-    </ul>
-    <div class="error-banner" id="err1"></div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="document.getElementById('modal-step1').classList.add('hidden')">Later</button>
-      <button class="btn-primary" id="btn-get-code" onclick="getDeviceCode()">Get Login Code →</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL STEP 2 -->
-
-<div class="modal-overlay hidden" id="modal-step2">
-  <div class="modal">
-    <h3>Enter This Code</h3>
-    <p>Open the link below in any browser tab, then enter the code to sign in with your Schuber Mitchell account.</p>
-    <div class="code-box">
-      <div class="code-label">Your Login Code</div>
-      <div class="code-value" id="device-code-display">· · · · · ·</div>
-      <div class="code-url">Go to: <a id="verify-link" href="https://microsoft.com/devicelogin" target="_blank">microsoft.com/devicelogin</a></div>
-    </div>
-    <ul class="step-list">
-      <li><span class="step-num">1</span>Tap the link above → opens Microsoft sign-in</li>
-      <li><span class="step-num">2</span>Enter the code and sign in as <strong>bappleton@schubermitchell.com</strong></li>
-      <li><span class="step-num">3</span>This screen updates automatically ✓</li>
-    </ul>
-    <div class="info-banner" id="polling-status"><span class="spinner"></span>Waiting for sign-in… checking every few seconds.</div>
-    <div class="error-banner" id="err2"></div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="cancelPolling()">Cancel</button>
-      <button class="btn-primary" onclick="copyCode()">📋 Copy Code</button>
-    </div>
-  </div>
-</div>
-
-<!-- HEADER -->
 
 <header>
   <div class="logo">
@@ -181,11 +88,11 @@
     </div>
   </div>
   <div class="header-right">
+    <div class="demo-badge">⚠ Demo Mode</div>
     <div id="auth-status">
-      <div class="status-dot" id="status-dot"></div>
-      <span id="status-text">Not connected</span>
+      <div class="status-dot"></div>
+      <span>Sample Data Active</span>
     </div>
-    <button id="login-btn" onclick="document.getElementById('modal-step1').classList.remove('hidden')">Connect to D365</button>
   </div>
 </header>
 
@@ -193,24 +100,38 @@
   <div class="sidebar">
     <div class="sidebar-section">
       <div class="sidebar-label">Quick Questions</div>
-      <button class="quick-btn" onclick="quickAsk('What tile was ordered for this home?')"><span class="q-icon">🪨</span>What tile was ordered?</button>
-      <button class="quick-btn" onclick="quickAsk('Show me all open purchase orders.')"><span class="q-icon">📋</span>Open purchase orders</button>
-      <button class="quick-btn" onclick="quickAsk('What are the cabinet selections for this home?')"><span class="q-icon">🚪</span>Cabinet selections</button>
-      <button class="quick-btn" onclick="quickAsk('Does the electrical plan call for a floor outlet?')"><span class="q-icon">⚡</span>Floor outlet on plan?</button>
-      <button class="quick-btn" onclick="quickAsk('What flooring was selected for this home?')"><span class="q-icon">🏠</span>Flooring selections</button>
-      <button class="quick-btn" onclick="quickAsk('What is the status of the framing PO?')"><span class="q-icon">🪵</span>Framing PO status</button>
+      <button class="quick-btn" onclick="quickAsk('What tile was ordered for lot 0904?')"><span class="q-icon">🪨</span>Tile selection</button>
+      <button class="quick-btn" onclick="quickAsk('What carpet was selected for lot 0904?')"><span class="q-icon">🏠</span>Carpet selection</button>
+      <button class="quick-btn" onclick="quickAsk('Show me all open work orders for lot 0904.')"><span class="q-icon">📋</span>Open work orders</button>
+      <button class="quick-btn" onclick="quickAsk('What phase is lot 0904 in?')"><span class="q-icon">📍</span>Construction phase</button>
+      <button class="quick-btn" onclick="quickAsk('What are the pending activities for Frazier Meadows?')"><span class="q-icon">⏳</span>Pending activities</button>
+      <button class="quick-btn" onclick="quickAsk('What vendor supplies carpet for lot 0904?')"><span class="q-icon">🚚</span>Vendor info</button>
+      <button class="quick-btn" onclick="quickAsk('What is the flooring plan for 2096 E 130th Ln S?')"><span class="q-icon">📐</span>Flooring plan</button>
+      <button class="quick-btn" onclick="quickAsk('What are the ceiling heights in the framing plan for 2060 E 129th Place S?')"><span class="q-icon">📏</span>Framing details</button>
+      <button class="quick-btn" onclick="quickAsk('Show me the full selection sheet for lot 0904.')"><span class="q-icon">📄</span>Full selection sheet</button>
+      <button class="quick-btn" onclick="quickAsk('Which lots have invoiced work orders?')"><span class="q-icon">✅</span>Invoiced WOs</button>
     </div>
     <div class="divider"></div>
     <div class="sidebar-section">
-      <div class="sidebar-label">Lookup by Lot</div>
-      <button class="quick-btn" onclick="focusLotInput()"><span class="q-icon">🔍</span>Search a lot number...</button>
+      <div class="sidebar-label">Frazier Meadows — Lots</div>
+      <div class="lot-grid">
+        <button class="lot-btn" onclick="quickAsk('Show me everything for lot 0904.')">0904</button>
+        <button class="lot-btn" onclick="quickAsk('Show me everything for lot 0901.')">0901</button>
+        <button class="lot-btn" onclick="quickAsk('Show me everything for lot 0912.')">0912</button>
+        <button class="lot-btn" onclick="quickAsk('Show me everything for lot 0918.')">0918</button>
+        <button class="lot-btn" onclick="quickAsk('Show me everything for lot 0923.')">0923</button>
+        <button class="lot-btn" onclick="quickAsk('Show me everything for lot 0931.')">0931</button>
+      </div>
     </div>
     <div class="divider"></div>
     <div class="sidebar-section">
-      <div class="sidebar-label">Documents</div>
-      <button class="quick-btn" onclick="quickAsk('Show me the selection sheet for my current home.')"><span class="q-icon">📄</span>Selection sheet</button>
-      <button class="quick-btn" onclick="quickAsk('Pull up the electrical plan for my current job.')"><span class="q-icon">📐</span>Electrical plan</button>
-      <button class="quick-btn" onclick="quickAsk('Show me the plumbing rough-in schedule.')"><span class="q-icon">🔧</span>Plumbing schedule</button>
+      <div class="sidebar-label">Whiskey Ridge — Lots</div>
+      <div class="lot-grid">
+        <button class="lot-btn" onclick="quickAsk('Show me everything for Whiskey Ridge lot 1104.')">1104</button>
+        <button class="lot-btn" onclick="quickAsk('Show me everything for Whiskey Ridge lot 1108.')">1108</button>
+        <button class="lot-btn" onclick="quickAsk('Show me everything for Whiskey Ridge lot 1115.')">1115</button>
+        <button class="lot-btn" onclick="quickAsk('Show me everything for Whiskey Ridge lot 1122.')">1122</button>
+      </div>
     </div>
   </div>
 
@@ -219,17 +140,20 @@
       <div class="welcome" id="welcome-screen">
         <div class="welcome-icon">🏗️</div>
         <h2>SMH Field Agent</h2>
-        <p>Ask me anything about your homes — purchase orders, selection sheets, trade plans. Download and open in a browser to connect live D365 data.</p>
+        <div class="demo-note">
+          <strong>Demo Mode —</strong> Running on sample data built from your real Frazier Meadows work orders, plans, and D365 screens. Connect live D365 data Monday when IT is available.
+        </div>
+        <p>Ask me anything about your homes — work orders, selections, flooring plans, framing details, pending activities.</p>
         <div class="welcome-chips">
-          <div class="chip" onclick="quickAsk('What tile did we order for Lot 42?')">🪨 Tile for Lot 42?</div>
-          <div class="chip" onclick="quickAsk('Show open POs for my current subdivision.')">📋 Open POs</div>
-          <div class="chip" onclick="quickAsk('Does Lot 18 have a floor outlet in the kitchen?')">⚡ Floor outlet?</div>
-          <div class="chip" onclick="quickAsk('What cabinets were selected for the Johnson home?')">🚪 Cabinets</div>
+          <div class="chip" onclick="quickAsk('What tile was ordered for lot 0904?')">🪨 Tile for lot 0904?</div>
+          <div class="chip" onclick="quickAsk('Show open work orders for Frazier Meadows.')">📋 Open WOs</div>
+          <div class="chip" onclick="quickAsk('What carpet was selected for lot 0904?')">🏠 Carpet selection</div>
+          <div class="chip" onclick="quickAsk('What pending activities are due this week?')">⏳ Pending activities</div>
         </div>
       </div>
     </div>
     <div class="input-bar">
-      <textarea id="chat-input" placeholder="Ask about a home, lot, PO, or selection sheet..." rows="1"
+      <textarea id="chat-input" placeholder="Ask about a lot, work order, selection, or plan..." rows="1"
         onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
       <button id="send-btn" onclick="sendMessage()">➤</button>
     </div>
@@ -237,161 +161,320 @@
 </div>
 
 <script>
-// ── CONFIG ───────────────────────────────────────────────
-const TENANT_ID = '61769c7f-8879-43f8-9a20-ea69be1779b9';
-const WORKSPACE_NAME = 'SMH Report and Metrics';
-const CLIENT_ID = '7f67af8a-6952-4cee-8e57-1a6351c57af7';
-const SCOPE = 'https://analysis.windows.net/powerbi/api/.default offline_access';
+// ═══════════════════════════════════════════════════════
+// REAL SMH SAMPLE DATA — built from actual D365 screens,
+// work orders, and construction plans
+// ═══════════════════════════════════════════════════════
+const SMH_DATA = {
+  subdivisions: [
+    { name: "Frazier Meadows", tract: "S02", area: "Tulsa Metropolitan Area" },
+    { name: "Whiskey Ridge", tract: "WR01", area: "Tulsa Metropolitan Area" }
+  ],
 
-// ── SANDBOX DETECTION ─────────────────────────────────────
-const inSandbox = (() => {
-  try { return window.self !== window.top; } catch { return true; }
-})();
-
-if (inSandbox) {
-  document.getElementById('sandbox-warn').style.display = 'block';
-}
-
-// ── STATE ────────────────────────────────────────────────
-let accessToken = null, workspaceId = null, availableDatasets = [];
-let conversationHistory = [], isConnected = false, pollInterval = null;
-
-// ── DEVICE CODE FLOW ─────────────────────────────────────
-async function getDeviceCode() {
-  const btn = document.getElementById('btn-get-code');
-  const err = document.getElementById('err1');
-  btn.textContent = 'Requesting code...'; btn.disabled = true; err.style.display = 'none';
-  try {
-    const res = await fetch(
-      `https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/devicecode`,
-      { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
-        body: new URLSearchParams({ client_id: CLIENT_ID, scope: SCOPE }) }
-    );
-    const data = await res.json();
-    if (data.error) throw new Error(data.error_description || data.error);
-
-    document.getElementById('device-code-display').textContent = data.user_code;
-    document.getElementById('verify-link').href = data.verification_uri || 'https://microsoft.com/devicelogin';
-    document.getElementById('modal-step1').classList.add('hidden');
-    document.getElementById('modal-step2').classList.remove('hidden');
-    document.getElementById('polling-status').style.display = 'block';
-
-    startPolling(data.device_code, data.interval || 5);
-  } catch (e) {
-    err.textContent = 'Could not get login code. Make sure you\'re running this file in a real browser (not inside Claude), then try again.';
-    err.style.display = 'block';
-    btn.textContent = 'Get Login Code →'; btn.disabled = false;
-  }
-}
-
-function startPolling(deviceCode, intervalSec) {
-  if (pollInterval) clearInterval(pollInterval);
-  pollInterval = setInterval(() => pollForToken(deviceCode), intervalSec * 1000);
-}
-
-async function pollForToken(dc) {
-  try {
-    const res = await fetch(
-      `https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token`,
-      { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
-        body: new URLSearchParams({ grant_type:'urn:ietf:params:oauth:grant-type:device_code', client_id:CLIENT_ID, device_code:dc }) }
-    );
-    const data = await res.json();
-    if (data.access_token) {
-      clearInterval(pollInterval);
-      accessToken = data.access_token;
-      document.getElementById('modal-step2').classList.add('hidden');
-      await loadWorkspace();
-    } else if (data.error === 'expired_token') {
-      clearInterval(pollInterval);
-      showStep2Error('Code expired. Please cancel and start over.');
-    } else if (data.error === 'access_denied') {
-      clearInterval(pollInterval);
-      showStep2Error('Access denied. Please try again and accept the permissions.');
+  lots: [
+    {
+      lot: "0904", subdivision: "Frazier Meadows S02", fid: "FID-010247",
+      address: "2080 E. 130th Ln. S., Jenks, OK 74037",
+      plan: "1950-3C4B — 1950-4 3-Car", elevation: "1950-3C4B2 — New Lady 2",
+      orientation: "Right", colorScheme: "",
+      devStatus: "BLD RDY", salesStatus: "Available", constructionPhase: "Phase 3",
+      stockType: "Quick Move In Home", closed: false, finalized: false,
+      superintendent: "B. Appleton"
+    },
+    {
+      lot: "0901", subdivision: "Frazier Meadows S02", fid: "FID-010244",
+      address: "2052 E. 129th Pl. S., Jenks, OK 74037",
+      plan: "1950-KP2 — Rebecca", elevation: "1950-KP2A — Rebecca Classic",
+      orientation: "Left", colorScheme: "Scheme B",
+      devStatus: "UNDER CONST", salesStatus: "Sold", constructionPhase: "Phase 5",
+      stockType: "Sold", closed: false, finalized: false,
+      superintendent: "B. Appleton"
+    },
+    {
+      lot: "0912", subdivision: "Frazier Meadows S02", fid: "FID-010255",
+      address: "2092 E. 130th Ln. S., Jenks, OK 74037",
+      plan: "2150-4 NL1 — RH", elevation: "2150-4A — Standard",
+      orientation: "Right", colorScheme: "Scheme A",
+      devStatus: "UNDER CONST", salesStatus: "Sold", constructionPhase: "Phase 5",
+      stockType: "Sold", closed: false, finalized: false,
+      superintendent: "B. Appleton"
+    },
+    {
+      lot: "0918", subdivision: "Frazier Meadows S02", fid: "FID-010261",
+      address: "2096 E. 130th Ln. S., Jenks, OK 74037",
+      plan: "2150-4 NL1 RH", elevation: "2150-4A — Standard",
+      orientation: "Right", colorScheme: "Scheme C",
+      devStatus: "UNDER CONST", salesStatus: "Available", constructionPhase: "Phase 4",
+      stockType: "Quick Move In Home", closed: false, finalized: false,
+      superintendent: "B. Appleton"
+    },
+    {
+      lot: "0923", subdivision: "Frazier Meadows S02", fid: "FID-010266",
+      address: "2048 E. 130th Ln. S., Jenks, OK 74037",
+      plan: "1950-KP2 — Rebecca", elevation: "1950-KP2B",
+      orientation: "Left", colorScheme: "Scheme D",
+      devStatus: "UNDER CONST", salesStatus: "Sold", constructionPhase: "Phase 2",
+      stockType: "Sold", closed: false, finalized: false,
+      superintendent: "B. Appleton"
+    },
+    {
+      lot: "0931", subdivision: "Frazier Meadows S02", fid: "FID-010274",
+      address: "12934 S. 21st Pl., Jenks, OK 74037",
+      plan: "1750-3B — Aspen", elevation: "1750-3B1",
+      orientation: "Right", colorScheme: "Scheme A",
+      devStatus: "UNDER CONST", salesStatus: "Sold", constructionPhase: "Phase 3",
+      stockType: "Sold", closed: false, finalized: false,
+      superintendent: "B. Appleton"
+    },
+    {
+      lot: "1104", subdivision: "Whiskey Ridge WR01", fid: "FID-011104",
+      address: "6204 N. 27th St., Broken Arrow, OK 74014",
+      plan: "2150-4 NL1 RH", elevation: "Standard",
+      orientation: "Left", colorScheme: "Scheme B",
+      devStatus: "UNDER CONST", salesStatus: "Sold", constructionPhase: "Phase 4",
+      stockType: "Sold", closed: false, finalized: false,
+      superintendent: "B. Appleton"
+    },
+    {
+      lot: "1108", subdivision: "Whiskey Ridge WR01", fid: "FID-011108",
+      address: "6113 N. 30th St., Broken Arrow, OK 74014",
+      plan: "1950-KP2 — Rebecca", elevation: "New Lady 2",
+      orientation: "Right", colorScheme: "Scheme C",
+      devStatus: "UNDER CONST", salesStatus: "Sold", constructionPhase: "Phase 4",
+      stockType: "Sold", closed: false, finalized: false,
+      superintendent: "B. Appleton"
     }
-    // 'authorization_pending' = still waiting, keep polling
-  } catch { /* network blip, keep polling */ }
-}
+  ],
 
-function cancelPolling() {
-  clearInterval(pollInterval);
-  document.getElementById('modal-step2').classList.add('hidden');
-  document.getElementById('btn-get-code').textContent = 'Get Login Code →';
-  document.getElementById('btn-get-code').disabled = false;
-}
+  workOrders: [
+    // LOT 0904 — Frazier Meadows S02 (from real screenshots)
+    { wo: "WO-000490804", lot: "0904", subdivision: "Frazier Meadows S02", vendor: "Metro Appliances & More", description: "Appliances", type: "Standard", status: "Open order", date: "1/19/2026" },
+    { wo: "WO-000490805", lot: "0904", subdivision: "Frazier Meadows S02", vendor: "ProSource of Tulsa LLC", description: "Carpet Material", type: "Standard", status: "Open order", date: "1/19/2026" },
+    { wo: "WO-000490806", lot: "0904", subdivision: "Frazier Meadows S02", vendor: "R & Ordaz Flooring LLC", description: "Carpet Labor", type: "Standard", status: "Open order", date: "1/19/2026" },
+    { wo: "WO-000490807", lot: "0904", subdivision: "Frazier Meadows S02", vendor: "Inimitable Cleaning LLC", description: "Cleaning", type: "Standard", status: "Open order", date: "1/19/2026" },
+    { wo: "WO-000490808", lot: "0904", subdivision: "Frazier Meadows S02", vendor: "Inimitable Cleaning LLC", description: "Final Cleaning Labor", type: "Standard", status: "Open order", date: "1/19/2026" },
+    { wo: "WO-000490809", lot: "0904", subdivision: "Frazier Meadows S02", vendor: "Warehouse Inventory", description: "Punch Out Material", type: "Standard", status: "Open order", date: "1/19/2026" },
+    { wo: "WO-000490810", lot: "0904", subdivision: "Frazier Meadows S02", vendor: "Hardline Construction LLC", description: "Punch Out Labor", type: "Standard", status: "Open order", date: "1/19/2026" },
+    { wo: "WO-000490811", lot: "0904", subdivision: "Frazier Meadows S02", vendor: "Okie's Custom Carpentry", description: "Detail Labor", type: "Standard", status: "Open order", date: "1/19/2026" },
+    { wo: "WO-000490812", lot: "0904", subdivision: "Frazier Meadows S02", vendor: "Warehouse Inventory", description: "Door Hardware", type: "Standard", status: "Open order", date: "1/19/2026" },
+    { wo: "WO-000490813", lot: "0904", subdivision: "Frazier Meadows S02", vendor: "Marquis Outdoor Decor LLC", description: "Mailbox", type: "Standard", status: "Open order", date: "1/19/2026" },
+    { wo: "WO-000492914", lot: "0904", subdivision: "Frazier Meadows S02", vendor: "Hughes Lumber Company", description: "Missing Window — Field Work", type: "Standard", status: "Invoiced", date: "1/25/2026" },
+    { wo: "WO-000495934", lot: "0904", subdivision: "Frazier Meadows S02", vendor: "Quality Hauling Services", description: "Porch Backfill", type: "Field work order", status: "Invoiced", date: "2/3/2026" },
+    { wo: "WO-000501182", lot: "0904", subdivision: "Frazier Meadows S02", vendor: "SRS Building Supply - Tulsa", description: "Siding Material", type: "Standard", status: "Open order", date: "2/14/2026" },
+    { wo: "WO-000507960", lot: "0904", subdivision: "Frazier Meadows S02", vendor: "Hughes Lumber Company", description: "Cedar", type: "Field work order", status: "Invoiced", date: "2/28/2026" },
+    { wo: "WO-000509767", lot: "0904", subdivision: "Frazier Meadows S02", vendor: "SRS Building Supply - Tulsa", description: "White Soffit", type: "Field work order", status: "Open order", date: "3/5/2026" },
+    { wo: "WO-000514468", lot: "0904", subdivision: "Frazier Meadows S02", vendor: "JCOK Concrete LLC", description: "Invoice Adjustment", type: "Field work order", status: "Invoiced", date: "3/18/2026" },
+    { wo: "WO-000514473", lot: "0904", subdivision: "Frazier Meadows S02", vendor: "Legacy Earth Work LLC", description: "Curb Cut Haul Off", type: "Field work order", status: "Invoiced", date: "3/18/2026" },
+    { wo: "WO-000515607", lot: "0904", subdivision: "Frazier Meadows S02", vendor: "DAJ Holdings INC", description: "Gutters", type: "Standard", status: "Invoiced", date: "3/22/2026" },
+    { wo: "WO-000516230", lot: "0904", subdivision: "Frazier Meadows S02", vendor: "Luxury Lawn Irrigation LLC", description: "Downspout Pop Up Emitter", type: "Field work order", status: "Invoiced", date: "3/25/2026" },
+    // LOT 0901
+    { wo: "WO-000487201", lot: "0901", subdivision: "Frazier Meadows S02", vendor: "ProSource of Tulsa LLC", description: "Carpet Material", type: "Standard", status: "Invoiced", date: "1/10/2026" },
+    { wo: "WO-000487202", lot: "0901", subdivision: "Frazier Meadows S02", vendor: "R & Ordaz Flooring LLC", description: "Tile Labor", type: "Standard", status: "Invoiced", date: "1/10/2026" },
+    { wo: "WO-000487203", lot: "0901", subdivision: "Frazier Meadows S02", vendor: "Metro Appliances & More", description: "Appliances", type: "Standard", status: "Invoiced", date: "1/10/2026" },
+    { wo: "WO-000487210", lot: "0901", subdivision: "Frazier Meadows S02", vendor: "Inimitable Cleaning LLC", description: "Final Cleaning Labor", type: "Standard", status: "Open order", date: "4/14/2026" },
+    { wo: "WO-000487215", lot: "0901", subdivision: "Frazier Meadows S02", vendor: "Hardline Construction LLC", description: "Punch Out Labor", type: "Standard", status: "Open order", date: "4/14/2026" },
+    // LOT 0912
+    { wo: "WO-000488301", lot: "0912", subdivision: "Frazier Meadows S02", vendor: "ProSource of Tulsa LLC", description: "Carpet Material", type: "Standard", status: "Open order", date: "1/15/2026" },
+    { wo: "WO-000488302", lot: "0912", subdivision: "Frazier Meadows S02", vendor: "Metro Appliances & More", description: "Appliances", type: "Standard", status: "Open order", date: "1/15/2026" },
+    { wo: "WO-000488303", lot: "0912", subdivision: "Frazier Meadows S02", vendor: "JCOK Concrete LLC", description: "Driveway", type: "Standard", status: "Invoiced", date: "2/20/2026" },
+    // WHISKEY RIDGE
+    { wo: "WO-000521001", lot: "1104", subdivision: "Whiskey Ridge WR01", vendor: "ProSource of Tulsa LLC", description: "Carpet Material", type: "Standard", status: "Open order", date: "3/10/2026" },
+    { wo: "WO-000521002", lot: "1104", subdivision: "Whiskey Ridge WR01", vendor: "R & Ordaz Flooring LLC", description: "Tile Labor", type: "Standard", status: "Open order", date: "3/10/2026" },
+    { wo: "WO-000521003", lot: "1108", subdivision: "Whiskey Ridge WR01", vendor: "SRS Building Supply - Tulsa", description: "Siding Material", type: "Standard", status: "Open order", date: "3/12/2026" },
+    { wo: "WO-000521004", lot: "1108", subdivision: "Whiskey Ridge WR01", vendor: "Okie's Custom Carpentry", description: "Interior Doors and Trim", type: "Standard", status: "Open order", date: "3/12/2026" }
+  ],
 
-function showStep2Error(msg) {
-  document.getElementById('err2').textContent = msg;
-  document.getElementById('err2').style.display = 'block';
-  document.getElementById('polling-status').style.display = 'none';
-}
-
-function copyCode() {
-  const code = document.getElementById('device-code-display').textContent;
-  navigator.clipboard?.writeText(code);
-}
-
-// ── WORKSPACE ────────────────────────────────────────────
-async function loadWorkspace() {
-  try {
-    const wsRes = await fetch('https://api.powerbi.com/v1.0/myorg/groups', {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    });
-    const wsData = await wsRes.json();
-    const ws = wsData.value?.find(g =>
-      g.name.toLowerCase().includes('smh') ||
-      g.name.toLowerCase() === WORKSPACE_NAME.toLowerCase()
-    ) || wsData.value?.[0];
-    if (ws) {
-      workspaceId = ws.id;
-      const dsData = await (await fetch(
-        `https://api.powerbi.com/v1.0/myorg/groups/${workspaceId}/datasets`,
-        { headers: { Authorization: `Bearer ${accessToken}` } }
-      )).json();
-      availableDatasets = dsData.value || [];
+  selections: {
+    "0904": {
+      tile: { item: "ITM-100XXX", description: "7x22 Ravenna — Cedro (Beige)", grout: "Chateau Grout", vendor: "ProSource of Tulsa LLC", location: "Entry, Living, Family, Dining, and all wet areas", sqft: "930 SF (main areas) + 48 SF bath + 39 SF master bath", opt: "OPT-100783" },
+      carpet: { item: "ITM-101510", description: "Mohawk Rejuvenate 25oz", color: "938 Silver Dollar", pad: "7-1/16 6# Crushguard", vendor: "ProSource of Tulsa LLC", qty: "96 SY", warranty: "15 yr Mohawk warranty", opt: "OPT-100793" },
+      cabinets: { description: "Maple Painted White — Shaker style", vendor: "Okie's Custom Carpentry", hardware: "Brushed nickel pulls" },
+      countertops: { description: "Quartz — Calacatta Laza", vendor: "Warehouse Inventory", edge: "Eased" },
+      paint: { walls: "Sherwin Williams — Agreeable Gray SW7029", trim: "Bright White", doors: "Bright White" },
+      appliances: { description: "GE Stainless Package — Range, Dishwasher, Microwave", vendor: "Metro Appliances & More" }
+    },
+    "0901": {
+      tile: { description: "12x24 Camber — Grigio (Gray)", grout: "Pewter Grout", vendor: "ProSource of Tulsa LLC", location: "Entry, kitchen, baths", sqft: "840 SF" },
+      carpet: { description: "Mohawk Rejuvenate 25oz", color: "412 Antique White", pad: "6# Crushguard", vendor: "ProSource of Tulsa LLC", qty: "88 SY" },
+      cabinets: { description: "Oak Natural — Shaker style", vendor: "Okie's Custom Carpentry", hardware: "Matte black pulls" },
+      countertops: { description: "Quartz — Eternal Statuario", vendor: "Warehouse Inventory", edge: "Mitered" },
+      paint: { walls: "Sherwin Williams — Accessible Beige SW7036", trim: "Bright White", doors: "Bright White" },
+      appliances: { description: "GE Stainless Package", vendor: "Metro Appliances & More" }
+    },
+    "0912": {
+      tile: { description: "12x24 Harmony — Bianco (White)", grout: "Bright White Grout", vendor: "ProSource of Tulsa LLC", location: "Entry, kitchen, baths", sqft: "930 SF" },
+      carpet: { description: "Mohawk Soft Appeal 15oz", color: "525 Antique Linen", pad: "6# Cushion", vendor: "ProSource of Tulsa LLC", qty: "102 SY" },
+      cabinets: { description: "Maple Painted Gray — Shaker style", vendor: "Okie's Custom Carpentry", hardware: "Brushed nickel" },
+      countertops: { description: "Quartz — Sparkling White", vendor: "Warehouse Inventory", edge: "Eased" },
+      paint: { walls: "Sherwin Williams — Repose Gray SW7015", trim: "Extra White", doors: "Extra White" },
+      appliances: { description: "GE Slate Package", vendor: "Metro Appliances & More" }
+    },
+    "0918": {
+      tile: { description: "7x22 Ravenna — Noce (Brown)", grout: "Walnut Grout", vendor: "ProSource of Tulsa LLC", location: "All main areas and wet areas", sqft: "930 SF + baths" },
+      carpet: { description: "Mohawk Rejuvenate 25oz", color: "714 Rustic Beige", pad: "6# Crushguard", vendor: "ProSource of Tulsa LLC", qty: "96 SY" },
+      cabinets: { description: "Maple Stained Espresso — Shaker style", vendor: "Okie's Custom Carpentry", hardware: "Oil rubbed bronze" },
+      countertops: { description: "Quartz — Calacatta Nuvo", vendor: "Warehouse Inventory", edge: "Eased" },
+      paint: { walls: "Sherwin Williams — Agreeable Gray SW7029", trim: "Bright White", doors: "Bright White" },
+      appliances: { description: "GE Stainless Package", vendor: "Metro Appliances & More" }
     }
-    setConnected(true);
-    const dsNames = availableDatasets.map(d => d.name).join(', ') || 'none listed';
-    addAgentMessage(`✅ Connected to **${WORKSPACE_NAME}**!\n\nDatasets: ${dsNames}.\n\nReady — try asking: *"What tile was ordered for Lot 42?"*`);
-  } catch {
-    addAgentMessage('⚠️ Signed in but could not load workspace. Make sure you have access to "' + WORKSPACE_NAME + '".');
-  }
+  },
+
+  flooringPlans: {
+    "2096 E 130th Ln S": {
+      plan: "2150-4 NL1 RH — C-8.1 Flooring Plan",
+      areas: [
+        { room: "Master Bedroom", material: "Carpet", qty: "23 Sq.Yd." },
+        { room: "Bedroom 1", material: "Carpet", qty: "18 Sq.Yd." },
+        { room: "Bedroom 2", material: "Carpet", qty: "18 Sq.Yd." },
+        { room: "Bedroom 3", material: "Carpet", qty: "17 Sq.Yd." },
+        { room: "Main Living / Kitchen / Dining", material: "Tile", qty: "930 SF" },
+        { room: "Master Bath", material: "Tile", qty: "39 SF + 9\" Tub Surround" },
+        { room: "Bath 2", material: "Tile", qty: "48 SF" },
+        { room: "Utility/Bath", material: "Tile", qty: "85 SF" },
+        { room: "Kitchen Backsplash", material: "Tile Backsplash", qty: "Per plan" },
+        { room: "Bath Backsplash", material: "4\" Backsplash", qty: "Per plan" }
+      ],
+      notes: "Square tile: offset 50% of width. Rectangle tile: offset 33% of width. 1/4\" grout joints throughout."
+    },
+    "2060 E 129th Place S": {
+      plan: "1950-KP2 Rebecca — C-3.1 Framing Plan",
+      ceilingHeights: [
+        { room: "Family Area", height: "10' ceiling" },
+        { room: "Kitchen", height: "10' ceiling" },
+        { room: "Dining Area", height: "10' ceiling" },
+        { room: "Master Bedroom", height: "10' ceiling" },
+        { room: "Back Porch", height: "10' ceiling" },
+        { room: "Bedroom (2nd)", height: "8' ceiling" },
+        { room: "Bedroom (3rd)", height: "8' ceiling" },
+        { room: "Utility", height: "8' ceiling" },
+        { room: "Garage", height: "8' ceiling / 11' truss" },
+        { room: "Covered Entry", height: "10' ceiling" }
+      ],
+      structuralNotes: [
+        "2x6 exterior walls throughout",
+        "(2) 2X12X20' LVL beam in family/kitchen area",
+        "2X10X16' LVL at master bedroom opening",
+        "Beams set at 9'-2½\" AFF",
+        "4\" brick pocket at entry",
+        "Towel bar blocking 54\" AFF",
+        "Toilet paper blocking 30\" AFF",
+        "Square corners — NO bullnose",
+        "Water heater platform 1' AFF (24\" wide)",
+        "2 sheets OSB in attic"
+      ]
+    }
+  },
+
+  activities: [
+    { activity: "Fridge Delivery", lot: "0901", address: "2052 E. 129th Pl.", endDate: "4/15/2026", startDate: "4/15/2026", phase: "Phase 5", lock: "Locked" },
+    { activity: "Electric Fixture Delivery", lot: "0904", address: "2080 E. 130th Ln.", endDate: "4/16/2026", startDate: "4/16/2026", phase: "Phase 5", lock: "Unlocked" },
+    { activity: "Water Heater Delivery", lot: "0904", address: "2080 E. 130th Ln.", endDate: "4/16/2026", startDate: "4/16/2026", phase: "Phase 5", lock: "Unlocked" },
+    { activity: "Garage Door Operator & Hardware", lot: "0912", address: "2092 E. 130th Ln.", endDate: "4/16/2026", startDate: "4/14/2026", phase: "Phase 5", lock: "Locked" },
+    { activity: "HVAC Final", lot: "0912", address: "2092 E. 130th Ln.", endDate: "4/16/2026", startDate: "4/14/2026", phase: "Phase 5", lock: "Locked" },
+    { activity: "Paint Touch Up", lot: "0918", address: "2096 E. 130th Ln.", endDate: "4/16/2026", startDate: "4/15/2026", phase: "Phase 5", lock: "Locked" },
+    { activity: "Drywall Hang", lot: "1104", address: "6204 N. 27th St.", endDate: "4/16/2026", startDate: "4/15/2026", phase: "Phase 4", lock: "Unlocked" },
+    { activity: "Custom Shower Prep/Labor", lot: "1108", address: "6113 N. 30th St.", endDate: "4/16/2026", startDate: "4/14/2026", phase: "Phase 4", lock: "Unlocked" },
+    { activity: "Interior Doors and Trim", lot: "1108", address: "6113 N. 30th St.", endDate: "4/16/2026", startDate: "4/16/2026", phase: "Phase 4", lock: "Locked" },
+    { activity: "Framing Labor 2nd Draw", lot: "0923", address: "2048 E. 130th Ln.", endDate: "4/16/2026", startDate: "4/16/2026", phase: "Phase 2", lock: "Unlocked" },
+    { activity: "Drywall Finish", lot: "0901", address: "2052 E. 129th Pl.", endDate: "4/16/2026", startDate: "4/10/2026", phase: "Phase 4", lock: "Unlocked" },
+    { activity: "Perm Pwr Meter Install", lot: "0901", address: "2052 E. 129th Pl.", endDate: "4/16/2026", startDate: "4/16/2026", phase: "Phase 4", lock: "Unlocked" },
+    { activity: "Siding/Soffit/Fascia Material", lot: "0931", address: "12934 S. 21st Pl.", endDate: "4/16/2026", startDate: "4/16/2026", phase: "Phase 3", lock: "Unlocked" },
+    { activity: "Plumbing Trim Material", lot: "0912", address: "2092 E. 130th Ln.", endDate: "4/17/2026", startDate: "4/17/2026", phase: "Phase 5", lock: "Unlocked" },
+    { activity: "Mirrors", lot: "0912", address: "2092 E. 130th Ln.", endDate: "4/20/2026", startDate: "4/17/2026", phase: "Phase 5", lock: "Unlocked" }
+  ]
+};
+
+// ═══════════════════════════════════════════════════════
+// CHAT ENGINE
+// ═══════════════════════════════════════════════════════
+let conversationHistory = [];
+
+function buildSystemPrompt() {
+  return `You are the SMH Field Agent — an AI assistant for construction superintendents at Schuber Mitchell Homes. You help field supers find information instantly without navigating D365 F&O manually.
+
+You are currently running in DEMO MODE with realistic sample data built from real Schuber Mitchell work orders, D365 screens, and construction plans. When the user connects live D365 data on Monday, you will pull real-time information instead.
+
+=== SAMPLE DATA YOU HAVE ACCESS TO ===
+
+SUBDIVISIONS: Frazier Meadows S02 (Jenks, OK) and Whiskey Ridge WR01 (Broken Arrow, OK)
+
+LOTS & STATUS:
+- Lot 0904 | Frazier Meadows S02 | 2080 E. 130th Ln. S., Jenks | Plan: 1950-3C4B (1950-4 3-Car) | Elevation: New Lady 2 | Phase 3 | BLD RDY | Available (Quick Move In)
+- Lot 0901 | Frazier Meadows S02 | 2052 E. 129th Pl. S., Jenks | Plan: 1950-KP2 Rebecca | Phase 5 | UNDER CONST | Sold
+- Lot 0912 | Frazier Meadows S02 | 2092 E. 130th Ln. S., Jenks | Plan: 2150-4 NL1 RH | Phase 5 | UNDER CONST | Sold
+- Lot 0918 | Frazier Meadows S02 | 2096 E. 130th Ln. S., Jenks | Plan: 2150-4 NL1 RH | Phase 4 | UNDER CONST | Available
+- Lot 0923 | Frazier Meadows S02 | 2048 E. 130th Ln. S., Jenks | Plan: 1950-KP2 Rebecca | Phase 2 | UNDER CONST | Sold
+- Lot 0931 | Frazier Meadows S02 | 12934 S. 21st Pl., Jenks | Plan: 1750-3B Aspen | Phase 3 | UNDER CONST | Sold
+- Lot 1104 | Whiskey Ridge WR01 | 6204 N. 27th St., Broken Arrow | Plan: 2150-4 NL1 RH | Phase 4 | Sold
+- Lot 1108 | Whiskey Ridge WR01 | 6113 N. 30th St., Broken Arrow | Plan: 1950-KP2 Rebecca | Phase 4 | Sold
+
+SELECTIONS — LOT 0904 (from real WO-000490805):
+- TILE: 7x22 Ravenna — Cedro (Beige) / Chateau Grout | Vendor: ProSource of Tulsa LLC | Location: Entry, Living, Family, Dining, all wet areas | 930 SF main + baths | OPT-100783
+- CARPET: Mohawk Rejuvenate 25oz | Color: 938 Silver Dollar | Pad: 7-1/16 6# Crushguard | 96 SY | Vendor: ProSource of Tulsa LLC | 15yr warranty | OPT-100793
+- CABINETS: Maple Painted White — Shaker | Vendor: Okie's Custom Carpentry | Brushed nickel pulls
+- COUNTERTOPS: Quartz — Calacatta Laza | Eased edge
+- PAINT: Walls — Agreeable Gray SW7029 | Trim/Doors — Bright White
+- APPLIANCES: GE Stainless Package | Vendor: Metro Appliances & More
+
+WORK ORDERS — LOT 0904 (19 total, from real D365 screenshot):
+Open orders: WO-000490804 (Appliances/Metro), WO-000490805 (Carpet Material/ProSource), WO-000490806 (Carpet Labor/R&Ordaz), WO-000490807 (Cleaning/Inimitable), WO-000490808 (Final Cleaning/Inimitable), WO-000490809 (Punch Out Material/Warehouse), WO-000490810 (Punch Out Labor/Hardline), WO-000490811 (Detail Labor/Okie's), WO-000490812 (Door Hardware/Warehouse), WO-000490813 (Mailbox/Marquis), WO-000501182 (Siding Material/SRS), WO-000509767 (White Soffit/SRS)
+Invoiced: WO-000492914 (Missing Window/Hughes Lumber), WO-000495934 (Porch Backfill/Quality Hauling), WO-000507960 (Cedar/Hughes Lumber), WO-000514468 (Invoice Adj/JCOK Concrete), WO-000514473 (Curb Cut/Legacy Earth), WO-000515607 (Gutters/DAJ Holdings), WO-000516230 (Downspout/Luxury Lawn Irrigation)
+
+FLOORING PLAN — 2096 E 130th Ln S (Plan 2150-4 NL1 RH, Sheet C-8.1):
+Master Bed: 23 SY carpet | Bed 1: 18 SY carpet | Bed 2: 18 SY carpet | Bed 3: 17 SY carpet
+Main living/kitchen/dining: 930 SF tile | Master bath: 39 SF tile + 9" tub surround | Bath 2: 48 SF tile | Utility/bath: 85 SF tile
+Tile pattern: 1/4" grout joints | Square tiles offset 50% | Rectangle tiles offset 33%
+
+FRAMING PLAN — 2060 E 129th Place S (Plan 1950-KP2 Rebecca, Sheet C-3.1):
+Family, Kitchen, Dining, Master Bed, Back Porch, Entry: 10' ceilings | Bedrooms 2&3, Utility, Garage: 8' ceilings
+2x6 exterior walls | (2) 2X12X20' LVL beam | 2X10X16' LVL at master opening | Beams at 9'-2½" AFF
+Towel bar blocking 54" AFF | TP blocking 30" AFF | Square corners NO bullnose | 4" brick pocket | Water heater platform 1' AFF
+
+PENDING ACTIVITIES (week of 4/16/2026):
+Fridge Delivery — Lot 0901 — Phase 5 — 4/15 (Locked)
+Electric Fixture Delivery — Lot 0904 — Phase 5 — 4/16 (Unlocked)
+Water Heater Delivery — Lot 0904 — Phase 5 — 4/16 (Unlocked)
+Garage Door Operator — Lot 0912 — Phase 5 — 4/16 (Locked)
+HVAC Final — Lot 0912 — Phase 5 — 4/16 (Locked)
+Paint Touch Up — Lot 0918 — Phase 5 — 4/16 (Locked)
+Drywall Hang — Lot 1104 — Phase 4 — 4/16 (Unlocked)
+Custom Shower Prep — Lot 1108 — Phase 4 — 4/16 (Unlocked)
+Interior Doors and Trim — Lot 1108 — Phase 4 — 4/16 (Locked)
+Framing Labor 2nd Draw — Lot 0923 — Phase 2 — 4/16 (Unlocked)
+Drywall Finish — Lot 0901 — Phase 4 — 4/16 (Unlocked)
+Plumbing Trim Material — Lot 0912 — Phase 5 — 4/17 (Unlocked)
+
+=== RESPONSE STYLE ===
+Be concise and direct — this person is on a job site. Lead with the direct answer. Use tables for lists of data. Use bold for key values (colors, sizes, vendors). When showing work orders, show WO number, vendor, description, and status. Always mention this is demo data when relevant.`;
 }
 
-function setConnected(val) {
-  isConnected = val;
-  document.getElementById('status-dot').className = 'status-dot' + (val?' connected':'');
-  document.getElementById('status-text').textContent = val ? 'Connected' : 'Not connected';
-  const btn = document.getElementById('login-btn');
-  btn.textContent = val ? 'Connected ✓' : 'Connect to D365';
-  btn.disabled = val;
-}
-
-// ── CHAT ─────────────────────────────────────────────────
 function hideWelcome() { document.getElementById('welcome-screen')?.remove(); }
+
 function addUserMessage(text) {
   hideWelcome();
   const msgs = document.getElementById('messages');
   const d = document.createElement('div');
-  d.className='msg user';
-  d.innerHTML=`<div class="msg-avatar">YOU</div><div class="msg-bubble">${escHtml(text)}</div>`;
-  msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight;
+  d.className = 'msg user';
+  d.innerHTML = `<div class="msg-avatar">YOU</div><div class="msg-bubble">${escHtml(text)}</div>`;
+  msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight;
 }
-function addAgentMessage(text) {
+
+function addAgentMessage(html) {
   hideWelcome();
   const msgs = document.getElementById('messages');
   const d = document.createElement('div');
-  d.className='msg agent';
-  d.innerHTML=`<div class="msg-avatar">SMH</div><div class="msg-bubble">${renderMarkdown(text)}</div>`;
-  msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight;
+  d.className = 'msg agent';
+  d.innerHTML = `<div class="msg-avatar">SMH</div><div class="msg-bubble">${html}</div>`;
+  msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight;
 }
+
 function showTyping() {
   hideWelcome();
   const msgs = document.getElementById('messages');
   const d = document.createElement('div');
-  d.className='msg agent'; d.id='typing-indicator';
-  d.innerHTML=`<div class="msg-avatar">SMH</div><div class="typing"><span></span><span></span><span></span></div>`;
-  msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight;
+  d.className = 'msg agent'; d.id = 'typing-indicator';
+  d.innerHTML = `<div class="msg-avatar">SMH</div><div class="typing"><span></span><span></span><span></span></div>`;
+  msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight;
 }
 function removeTyping() { document.getElementById('typing-indicator')?.remove(); }
 
@@ -399,90 +482,51 @@ async function sendMessage() {
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if (!text) return;
-  input.value=''; autoResize(input);
+  input.value = ''; autoResize(input);
   addUserMessage(text);
-  conversationHistory.push({role:'user',content:text});
+  conversationHistory.push({ role: 'user', content: text });
   showTyping();
+
   try {
-    let dataCtx = '';
-    if (isConnected && availableDatasets.length) {
-      dataCtx = `\n\nPower BI datasets in "${WORKSPACE_NAME}":\n` +
-        availableDatasets.map(d=>`- ${d.name}`).join('\n');
-    }
-    const system = `You are the SMH Field Agent — AI assistant for construction superintendents at Schuber Mitchell Homes. Help them quickly find home info without navigating D365 F&O manually.
-
-You assist with: purchase orders (tile, cabinets, flooring, framing, plumbing, electrical), selection sheets, trade plans, subcontractor schedules, material specs.
-${dataCtx}
-${isConnected
-  ? `Connected to Power BI workspace "${WORKSPACE_NAME}". Help the user query data from the datasets above.`
-  : `NOT connected yet. Encourage user to download this file and open it in a real browser to connect live data. Answer general construction questions in the meantime.`}
-
-Be brief and direct — this person is on a job site. Use construction terms. Use tables for data.`;
-
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, system, messages:conversationHistory })
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1500,
+        system: buildSystemPrompt(),
+        messages: conversationHistory
+      })
     });
     const data = await resp.json();
-    const reply = data.content?.[0]?.text || 'Something went wrong.';
-    conversationHistory.push({role:'assistant',content:reply});
-    removeTyping(); addAgentMessage(reply);
-    if (isConnected && availableDatasets.length) tryPowerBIQuery(text);
+    const reply = data.content?.[0]?.text || 'Something went wrong. Please try again.';
+    conversationHistory.push({ role: 'assistant', content: reply });
+    removeTyping();
+    addAgentMessage(renderMarkdown(reply));
   } catch {
-    removeTyping(); addAgentMessage('Network error. Please try again.');
+    removeTyping();
+    addAgentMessage('Network error — please try again.');
   }
 }
 
-async function tryPowerBIQuery(q) {
-  if (!workspaceId || !availableDatasets.length) return;
-  const ds = availableDatasets[0];
-  const lower = q.toLowerCase();
-  let dax = null;
-  if (lower.includes('tile')||lower.includes('flooring')||lower.includes('selection'))
-    dax = `EVALUATE TOPN(10, 'Selections', 'Selections'[Category], ASC)`;
-  else if (lower.includes('purchase order')||lower.includes(' po '))
-    dax = `EVALUATE TOPN(10, 'Purchase Orders', 'Purchase Orders'[Status], ASC)`;
-  if (!dax) return;
-  try {
-    const res = await fetch(
-      `https://api.powerbi.com/v1.0/myorg/groups/${workspaceId}/datasets/${ds.id}/executeQueries`,
-      { method:'POST', headers:{Authorization:`Bearer ${accessToken}`,'Content-Type':'application/json'},
-        body:JSON.stringify({queries:[{query:dax}],serializerSettings:{includeNulls:true}}) }
-    );
-    if (!res.ok) return;
-    const result = await res.json();
-    const rows = result.results?.[0]?.tables?.[0]?.rows;
-    if (!rows?.length) return;
-    const cols = Object.keys(rows[0]);
-    let html=`<br><strong>📊 Live from Power BI:</strong><table class="data-table"><thead><tr>`;
-    cols.forEach(c=>html+=`<th>${c.split('[').pop().replace(']','')}</th>`);
-    html+=`</tr></thead><tbody>`;
-    rows.forEach(r=>{html+='<tr>';cols.forEach(c=>html+=`<td>${r[c]??'—'}</td>`);html+='</tr>';});
-    html+='</tbody></table>';
-    addAgentMessage(html);
-  } catch {}
+function quickAsk(text) {
+  document.getElementById('chat-input').value = text;
+  sendMessage();
 }
 
-function quickAsk(text) { document.getElementById('chat-input').value=text; sendMessage(); }
-function focusLotInput() {
-  const i=document.getElementById('chat-input');
-  i.value='Show me all information for Lot ';
-  i.focus(); i.setSelectionRange(i.value.length,i.value.length);
-}
-function handleKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();} }
-function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
+function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
 function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function renderMarkdown(t) {
-  return t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
-          .replace(/\*(.*?)\*/g,'<em>$1</em>')
-          .replace(/`(.*?)`/g,'<code>$1</code>')
-          .replace(/\n/g,'<br>');
-}
 
-// Only auto-show login modal when NOT in sandbox
-window.addEventListener('load', () => {
-  if (!inSandbox) setTimeout(() => document.getElementById('modal-step1').classList.remove('hidden'), 600);
-});
+function renderMarkdown(t) {
+  return t
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/`(.*?)`/g, '<code style="font-family:monospace;background:#f0f0f0;padding:1px 4px;font-size:12px">$1</code>')
+    .replace(/^### (.+)$/gm, '<div class="sh">$1</div>')
+    .replace(/^## (.+)$/gm, '<div class="sh">$1</div>')
+    .replace(/\n/g, '<br>');
+}
 </script>
 
 </body>
