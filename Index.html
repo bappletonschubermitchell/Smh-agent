@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMH Field Agent</title>
+<!--
+  ============================================================
+  SMH FIELD AGENT — Schuber Mitchell Homes
+  ============================================================
+  SETUP INSTRUCTIONS:
+  1. Save this file to your phone or computer
+  2. Open it in Safari, Chrome, or Edge (NOT inside Claude)
+  3. Click "Get Login Code" and sign in with your Microsoft account
+  4. That's it — ask away!
+  ============================================================
+-->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+  :root {
+    --rust:#C94A2B; --rust-dark:#9E3720; --steel:#1C2B3A; --steel-mid:#243447;
+    --sand:#E8DCC8; --sand-light:#F5F0E8; --chalk:#F9F6F0;
+    --text:#1C2B3A; --muted:#6B7F8F; --border:rgba(28,43,58,0.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--chalk);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+  header{background:var(--steel);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--rust);flex-shrink:0;}
+  .logo{display:flex;align-items:center;gap:12px;}
+  .logo-mark{width:36px;height:36px;background:var(--rust);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:18px;color:white;}
+  .logo-text{font-family:'Bebas Neue',sans-serif;font-size:22px;color:white;letter-spacing:2px;}
+  .logo-sub{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+  .header-right{display:flex;align-items:center;gap:16px;}
+  #auth-status{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sand);font-family:'DM Mono',monospace;}
+  .status-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);transition:background 0.3s;}
+  .status-dot.connected{background:#4CAF50;box-shadow:0 0 6px #4CAF5088;}
+  #login-btn{background:var(--rust);color:white;border:none;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.2s;}
+  #login-btn:hover{background:var(--rust-dark);}
+  #login-btn:disabled{background:var(--muted);cursor:default;}
+  .main{flex:1;display:flex;overflow:hidden;max-height:calc(100vh - 60px);}
+  .sidebar{width:260px;background:var(--steel-mid);border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
+  .sidebar-section{padding:20px 16px 12px;}
+  .sidebar-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;font-weight:500;}
+  .quick-btn{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:var(--sand);padding:10px 14px;text-align:left;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;margin-bottom:6px;transition:all 0.15s;line-height:1.4;}
+  .quick-btn:hover{background:rgba(201,74,43,0.2);border-color:var(--rust);color:white;}
+  .q-icon{margin-right:8px;}
+  .divider{height:1px;background:rgba(255,255,255,0.06);margin:4px 16px;}
+  .chat-area{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+  #messages{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:16px;}
+  .welcome{margin:auto;text-align:center;max-width:480px;padding:40px 20px;}
+  .welcome-icon{font-size:48px;margin-bottom:16px;}
+  .welcome h2{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:var(--steel);margin-bottom:8px;}
+  .welcome p{color:var(--muted);font-size:15px;line-height:1.6;margin-bottom:24px;}
+  .welcome-chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+  .chip{background:white;border:1px solid var(--border);padding:8px 14px;font-size:13px;color:var(--steel);cursor:pointer;transition:all 0.15s;}
+  .chip:hover{border-color:var(--rust);color:var(--rust);}
+  .msg{display:flex;gap:12px;max-width:780px;animation:fadeUp 0.25s ease;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .msg.user{align-self:flex-end;flex-direction:row-reverse;}
+  .msg-avatar{width:32px;height:32px;border-radius:2px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1px;}
+  .msg.agent .msg-avatar{background:var(--steel);color:var(--rust);}
+  .msg.user .msg-avatar{background:var(--rust);color:white;}
+  .msg-bubble{padding:12px 16px;font-size:14px;line-height:1.65;max-width:640px;}
+  .msg.agent .msg-bubble{background:white;border:1px solid var(--border);border-left:3px solid var(--rust);}
+  .msg.user .msg-bubble{background:var(--steel);color:var(--sand-light);}
+  .msg-bubble strong{color:var(--rust);font-weight:600;}
+  .data-table{width:100%;border-collapse:collapse;margin-top:10px;font-family:'DM Mono',monospace;font-size:12px;}
+  .data-table th{background:var(--sand);padding:6px 10px;text-align:left;font-weight:500;color:var(--muted);text-transform:uppercase;font-size:10px;}
+  .data-table td{padding:7px 10px;border-bottom:1px solid var(--border);}
+  .data-table tr:last-child td{border-bottom:none;}
+  .typing{display:flex;gap:4px;align-items:center;padding:14px 16px;background:white;border:1px solid var(--border);border-left:3px solid var(--rust);width:fit-content;}
+  .typing span{width:6px;height:6px;background:var(--rust);border-radius:50%;animation:bounce 1.2s infinite;opacity:0.6;}
+  .typing span:nth-child(2){animation-delay:0.2s}.typing span:nth-child(3){animation-delay:0.4s}
+  @keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:0.6}30%{transform:translateY(-5px);opacity:1}}
+  .input-bar{border-top:1px solid var(--border);background:white;padding:16px 24px;display:flex;gap:12px;align-items:flex-end;}
+  #chat-input{flex:1;border:1px solid var(--border);background:var(--chalk);padding:12px 16px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);resize:none;outline:none;min-height:46px;max-height:120px;transition:border-color 0.2s;}
+  #chat-input:focus{border-color:var(--rust);}
+  #chat-input::placeholder{color:var(--muted);}
+  #send-btn{background:var(--rust);color:white;border:none;width:46px;height:46px;cursor:pointer;font-size:18px;transition:background 0.2s;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  #send-btn:hover{background:var(--rust-dark);}
+  .modal-overlay{position:fixed;inset:0;background:rgba(28,43,58,0.85);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px);}
+  .modal-overlay.hidden{display:none;}
+  .modal{background:white;width:460px;max-width:95vw;border-top:4px solid var(--rust);padding:32px;}
+  .modal h3{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--steel);margin-bottom:8px;}
+  .modal p{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5;}
+  .code-box{background:var(--steel);padding:20px;text-align:center;margin:16px 0;}
+  .code-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+  .code-value{font-family:'DM Mono',monospace;font-size:32px;font-weight:500;color:white;letter-spacing:6px;}
+  .code-url{font-size:12px;color:var(--sand);margin-top:8px;}
+  .code-url a{color:#FF8A6E;text-decoration:none;font-weight:600;}
+  .step-list{list-style:none;margin:0 0 16px;}
+  .step-list li{font-size:13px;color:var(--text);padding:7px 0;display:flex;align-items:flex-start;gap:10px;border-bottom:1px solid var(--border);line-height:1.4;}
+  .step-list li:last-child{border-bottom:none;}
+  .step-num{background:var(--rust);color:white;width:20px;height:20px;border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+  .modal-actions{display:flex;gap:10px;margin-top:16px;}
+  .btn-primary{flex:1;background:var(--rust);color:white;border:none;padding:12px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:background 0.2s;}
+  .btn-primary:hover{background:var(--rust-dark);}
+  .btn-primary:disabled{background:var(--muted);cursor:default;}
+  .btn-secondary{background:transparent;color:var(--muted);border:1px solid var(--border);padding:12px 20px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;}
+  .error-banner{background:#FFF0ED;border-left:3px solid var(--rust);padding:10px 14px;font-size:13px;color:var(--rust-dark);margin-top:10px;display:none;}
+  .info-banner{background:#EDF5FF;border-left:3px solid #2563EB;padding:10px 14px;font-size:13px;color:#1E3A5F;margin-top:10px;display:none;line-height:1.5;}
+  .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(30,58,95,0.3);border-top-color:#2563EB;border-radius:50%;animation:spin 0.8s linear infinite;margin-right:6px;vertical-align:middle;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  /* Sandbox warning banner */
+  .sandbox-warning{background:#FFF8E6;border:1px solid #F5D87A;border-left:3px solid #D97706;padding:16px 20px;font-size:13px;color:#7C4A00;line-height:1.6;}
+  .sandbox-warning strong{display:block;font-size:15px;margin-bottom:6px;}
+  .sandbox-warning ol{margin:8px 0 0 18px;}
+  .sandbox-warning li{margin-bottom:4px;}
+  ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:var(--border);}
+</style>
+</head>
+<body>
+
+<!-- SANDBOX WARNING — shown only when running inside an iframe -->
+
+<div class="sandbox-warning" id="sandbox-warn" style="display:none">
+  <strong>⚠️ Open this file in a real browser tab to connect to D365</strong>
+  This app is currently running inside Claude's sandbox, which blocks connections to Microsoft.
+  To use it with live data:
+  <ol>
+    <li>Tap the <strong>⋯</strong> menu (top right of this artifact) → <strong>Download</strong></li>
+    <li>Open the downloaded <strong>smh-agent.html</strong> file in Safari or Chrome</li>
+    <li>Sign in and use it from there</li>
+  </ol>
+  You can still use the chat below without connecting — it will answer general construction questions.
+</div>
+
+<!-- MODAL STEP 1 -->
+
+<div class="modal-overlay hidden" id="modal-step1">
+  <div class="modal">
+    <h3>Connect to SMH</h3>
+    <p>We'll get a short one-time code from Microsoft. You enter it on Microsoft's website — no passwords typed here, works on any device.</p>
+    <ul class="step-list">
+      <li><span class="step-num">1</span>Click "Get Login Code" — takes 2 seconds</li>
+      <li><span class="step-num">2</span>A code + link appear below</li>
+      <li><span class="step-num">3</span>Open the link, enter the code, sign in as <strong>bappleton@schubermitchell.com</strong></li>
+      <li><span class="step-num">4</span>Come back here — connects automatically ✓</li>
+    </ul>
+    <div class="error-banner" id="err1"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="document.getElementById('modal-step1').classList.add('hidden')">Later</button>
+      <button class="btn-primary" id="btn-get-code" onclick="getDeviceCode()">Get Login Code →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL STEP 2 -->
+
+<div class="modal-overlay hidden" id="modal-step2">
+  <div class="modal">
+    <h3>Enter This Code</h3>
+    <p>Open the link below in any browser tab, then enter the code to sign in with your Schuber Mitchell account.</p>
+    <div class="code-box">
+      <div class="code-label">Your Login Code</div>
+      <div class="code-value" id="device-code-display">· · · · · ·</div>
+      <div class="code-url">Go to: <a id="verify-link" href="https://microsoft.com/devicelogin" target="_blank">microsoft.com/devicelogin</a></div>
+    </div>
+    <ul class="step-list">
+      <li><span class="step-num">1</span>Tap the link above → opens Microsoft sign-in</li>
+      <li><span class="step-num">2</span>Enter the code and sign in as <strong>bappleton@schubermitchell.com</strong></li>
+      <li><span class="step-num">3</span>This screen updates automatically ✓</li>
+    </ul>
+    <div class="info-banner" id="polling-status"><span class="spinner"></span>Waiting for sign-in… checking every few seconds.</div>
+    <div class="error-banner" id="err2"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="cancelPolling()">Cancel</button>
+      <button class="btn-primary" onclick="copyCode()">📋 Copy Code</button>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">SMH</div>
+    <div>
+      <div class="logo-text">Field Agent</div>
+      <div class="logo-sub">Schuber Mitchell Homes</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div id="auth-status">
+      <div class="status-dot" id="status-dot"></div>
+      <span id="status-text">Not connected</span>
+    </div>
+    <button id="login-btn" onclick="document.getElementById('modal-step1').classList.remove('hidden')">Connect to D365</button>
+  </div>
+</header>
+
+<div class="main">
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Quick Questions</div>
+      <button class="quick-btn" onclick="quickAsk('What tile was ordered for this home?')"><span class="q-icon">🪨</span>What tile was ordered?</button>
+      <button class="quick-btn" onclick="quickAsk('Show me all open purchase orders.')"><span class="q-icon">📋</span>Open purchase orders</button>
+      <button class="quick-btn" onclick="quickAsk('What are the cabinet selections for this home?')"><span class="q-icon">🚪</span>Cabinet selections</button>
+      <button class="quick-btn" onclick="quickAsk('Does the electrical plan call for a floor outlet?')"><span class="q-icon">⚡</span>Floor outlet on plan?</button>
+      <button class="quick-btn" onclick="quickAsk('What flooring was selected for this home?')"><span class="q-icon">🏠</span>Flooring selections</button>
+      <button class="quick-btn" onclick="quickAsk('What is the status of the framing PO?')"><span class="q-icon">🪵</span>Framing PO status</button>
+    </div>
+    <div class="divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Lookup by Lot</div>
+      <button class="quick-btn" onclick="focusLotInput()"><span class="q-icon">🔍</span>Search a lot number...</button>
+    </div>
+    <div class="divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Documents</div>
+      <button class="quick-btn" onclick="quickAsk('Show me the selection sheet for my current home.')"><span class="q-icon">📄</span>Selection sheet</button>
+      <button class="quick-btn" onclick="quickAsk('Pull up the electrical plan for my current job.')"><span class="q-icon">📐</span>Electrical plan</button>
+      <button class="quick-btn" onclick="quickAsk('Show me the plumbing rough-in schedule.')"><span class="q-icon">🔧</span>Plumbing schedule</button>
+    </div>
+  </div>
+
+  <div class="chat-area">
+    <div id="messages">
+      <div class="welcome" id="welcome-screen">
+        <div class="welcome-icon">🏗️</div>
+        <h2>SMH Field Agent</h2>
+        <p>Ask me anything about your homes — purchase orders, selection sheets, trade plans. Download and open in a browser to connect live D365 data.</p>
+        <div class="welcome-chips">
+          <div class="chip" onclick="quickAsk('What tile did we order for Lot 42?')">🪨 Tile for Lot 42?</div>
+          <div class="chip" onclick="quickAsk('Show open POs for my current subdivision.')">📋 Open POs</div>
+          <div class="chip" onclick="quickAsk('Does Lot 18 have a floor outlet in the kitchen?')">⚡ Floor outlet?</div>
+          <div class="chip" onclick="quickAsk('What cabinets were selected for the Johnson home?')">🚪 Cabinets</div>
+        </div>
+      </div>
+    </div>
+    <div class="input-bar">
+      <textarea id="chat-input" placeholder="Ask about a home, lot, PO, or selection sheet..." rows="1"
+        onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <button id="send-btn" onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ───────────────────────────────────────────────
+const TENANT_ID = '61769c7f-8879-43f8-9a20-ea69be1779b9';
+const WORKSPACE_NAME = 'SMH Report and Metrics';
+const CLIENT_ID = '7f67af8a-6952-4cee-8e57-1a6351c57af7';
+const SCOPE = 'https://analysis.windows.net/powerbi/api/.default offline_access';
+
+// ── SANDBOX DETECTION ─────────────────────────────────────
+const inSandbox = (() => {
+  try { return window.self !== window.top; } catch { return true; }
+})();
+
+if (inSandbox) {
+  document.getElementById('sandbox-warn').style.display = 'block';
+}
+
+// ── STATE ────────────────────────────────────────────────
+let accessToken = null, workspaceId = null, availableDatasets = [];
+let conversationHistory = [], isConnected = false, pollInterval = null;
+
+// ── DEVICE CODE FLOW ─────────────────────────────────────
+async function getDeviceCode() {
+  const btn = document.getElementById('btn-get-code');
+  const err = document.getElementById('err1');
+  btn.textContent = 'Requesting code...'; btn.disabled = true; err.style.display = 'none';
+  try {
+    const res = await fetch(
+      `https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/devicecode`,
+      { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
+        body: new URLSearchParams({ client_id: CLIENT_ID, scope: SCOPE }) }
+    );
+    const data = await res.json();
+    if (data.error) throw new Error(data.error_description || data.error);
+
+    document.getElementById('device-code-display').textContent = data.user_code;
+    document.getElementById('verify-link').href = data.verification_uri || 'https://microsoft.com/devicelogin';
+    document.getElementById('modal-step1').classList.add('hidden');
+    document.getElementById('modal-step2').classList.remove('hidden');
+    document.getElementById('polling-status').style.display = 'block';
+
+    startPolling(data.device_code, data.interval || 5);
+  } catch (e) {
+    err.textContent = 'Could not get login code. Make sure you\'re running this file in a real browser (not inside Claude), then try again.';
+    err.style.display = 'block';
+    btn.textContent = 'Get Login Code →'; btn.disabled = false;
+  }
+}
+
+function startPolling(deviceCode, intervalSec) {
+  if (pollInterval) clearInterval(pollInterval);
+  pollInterval = setInterval(() => pollForToken(deviceCode), intervalSec * 1000);
+}
+
+async function pollForToken(dc) {
+  try {
+    const res = await fetch(
+      `https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token`,
+      { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
+        body: new URLSearchParams({ grant_type:'urn:ietf:params:oauth:grant-type:device_code', client_id:CLIENT_ID, device_code:dc }) }
+    );
+    const data = await res.json();
+    if (data.access_token) {
+      clearInterval(pollInterval);
+      accessToken = data.access_token;
+      document.getElementById('modal-step2').classList.add('hidden');
+      await loadWorkspace();
+    } else if (data.error === 'expired_token') {
+      clearInterval(pollInterval);
+      showStep2Error('Code expired. Please cancel and start over.');
+    } else if (data.error === 'access_denied') {
+      clearInterval(pollInterval);
+      showStep2Error('Access denied. Please try again and accept the permissions.');
+    }
+    // 'authorization_pending' = still waiting, keep polling
+  } catch { /* network blip, keep polling */ }
+}
+
+function cancelPolling() {
+  clearInterval(pollInterval);
+  document.getElementById('modal-step2').classList.add('hidden');
+  document.getElementById('btn-get-code').textContent = 'Get Login Code →';
+  document.getElementById('btn-get-code').disabled = false;
+}
+
+function showStep2Error(msg) {
+  document.getElementById('err2').textContent = msg;
+  document.getElementById('err2').style.display = 'block';
+  document.getElementById('polling-status').style.display = 'none';
+}
+
+function copyCode() {
+  const code = document.getElementById('device-code-display').textContent;
+  navigator.clipboard?.writeText(code);
+}
+
+// ── WORKSPACE ────────────────────────────────────────────
+async function loadWorkspace() {
+  try {
+    const wsRes = await fetch('https://api.powerbi.com/v1.0/myorg/groups', {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    const wsData = await wsRes.json();
+    const ws = wsData.value?.find(g =>
+      g.name.toLowerCase().includes('smh') ||
+      g.name.toLowerCase() === WORKSPACE_NAME.toLowerCase()
+    ) || wsData.value?.[0];
+    if (ws) {
+      workspaceId = ws.id;
+      const dsData = await (await fetch(
+        `https://api.powerbi.com/v1.0/myorg/groups/${workspaceId}/datasets`,
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      )).json();
+      availableDatasets = dsData.value || [];
+    }
+    setConnected(true);
+    const dsNames = availableDatasets.map(d => d.name).join(', ') || 'none listed';
+    addAgentMessage(`✅ Connected to **${WORKSPACE_NAME}**!\n\nDatasets: ${dsNames}.\n\nReady — try asking: *"What tile was ordered for Lot 42?"*`);
+  } catch {
+    addAgentMessage('⚠️ Signed in but could not load workspace. Make sure you have access to "' + WORKSPACE_NAME + '".');
+  }
+}
+
+function setConnected(val) {
+  isConnected = val;
+  document.getElementById('status-dot').className = 'status-dot' + (val?' connected':'');
+  document.getElementById('status-text').textContent = val ? 'Connected' : 'Not connected';
+  const btn = document.getElementById('login-btn');
+  btn.textContent = val ? 'Connected ✓' : 'Connect to D365';
+  btn.disabled = val;
+}
+
+// ── CHAT ─────────────────────────────────────────────────
+function hideWelcome() { document.getElementById('welcome-screen')?.remove(); }
+function addUserMessage(text) {
+  hideWelcome();
+  const msgs = document.getElementById('messages');
+  const d = document.createElement('div');
+  d.className='msg user';
+  d.innerHTML=`<div class="msg-avatar">YOU</div><div class="msg-bubble">${escHtml(text)}</div>`;
+  msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight;
+}
+function addAgentMessage(text) {
+  hideWelcome();
+  const msgs = document.getElementById('messages');
+  const d = document.createElement('div');
+  d.className='msg agent';
+  d.innerHTML=`<div class="msg-avatar">SMH</div><div class="msg-bubble">${renderMarkdown(text)}</div>`;
+  msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight;
+}
+function showTyping() {
+  hideWelcome();
+  const msgs = document.getElementById('messages');
+  const d = document.createElement('div');
+  d.className='msg agent'; d.id='typing-indicator';
+  d.innerHTML=`<div class="msg-avatar">SMH</div><div class="typing"><span></span><span></span><span></span></div>`;
+  msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight;
+}
+function removeTyping() { document.getElementById('typing-indicator')?.remove(); }
+
+async function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value=''; autoResize(input);
+  addUserMessage(text);
+  conversationHistory.push({role:'user',content:text});
+  showTyping();
+  try {
+    let dataCtx = '';
+    if (isConnected && availableDatasets.length) {
+      dataCtx = `\n\nPower BI datasets in "${WORKSPACE_NAME}":\n` +
+        availableDatasets.map(d=>`- ${d.name}`).join('\n');
+    }
+    const system = `You are the SMH Field Agent — AI assistant for construction superintendents at Schuber Mitchell Homes. Help them quickly find home info without navigating D365 F&O manually.
+
+You assist with: purchase orders (tile, cabinets, flooring, framing, plumbing, electrical), selection sheets, trade plans, subcontractor schedules, material specs.
+${dataCtx}
+${isConnected
+  ? `Connected to Power BI workspace "${WORKSPACE_NAME}". Help the user query data from the datasets above.`
+  : `NOT connected yet. Encourage user to download this file and open it in a real browser to connect live data. Answer general construction questions in the meantime.`}
+
+Be brief and direct — this person is on a job site. Use construction terms. Use tables for data.`;
+
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, system, messages:conversationHistory })
+    });
+    const data = await resp.json();
+    const reply = data.content?.[0]?.text || 'Something went wrong.';
+    conversationHistory.push({role:'assistant',content:reply});
+    removeTyping(); addAgentMessage(reply);
+    if (isConnected && availableDatasets.length) tryPowerBIQuery(text);
+  } catch {
+    removeTyping(); addAgentMessage('Network error. Please try again.');
+  }
+}
+
+async function tryPowerBIQuery(q) {
+  if (!workspaceId || !availableDatasets.length) return;
+  const ds = availableDatasets[0];
+  const lower = q.toLowerCase();
+  let dax = null;
+  if (lower.includes('tile')||lower.includes('flooring')||lower.includes('selection'))
+    dax = `EVALUATE TOPN(10, 'Selections', 'Selections'[Category], ASC)`;
+  else if (lower.includes('purchase order')||lower.includes(' po '))
+    dax = `EVALUATE TOPN(10, 'Purchase Orders', 'Purchase Orders'[Status], ASC)`;
+  if (!dax) return;
+  try {
+    const res = await fetch(
+      `https://api.powerbi.com/v1.0/myorg/groups/${workspaceId}/datasets/${ds.id}/executeQueries`,
+      { method:'POST', headers:{Authorization:`Bearer ${accessToken}`,'Content-Type':'application/json'},
+        body:JSON.stringify({queries:[{query:dax}],serializerSettings:{includeNulls:true}}) }
+    );
+    if (!res.ok) return;
+    const result = await res.json();
+    const rows = result.results?.[0]?.tables?.[0]?.rows;
+    if (!rows?.length) return;
+    const cols = Object.keys(rows[0]);
+    let html=`<br><strong>📊 Live from Power BI:</strong><table class="data-table"><thead><tr>`;
+    cols.forEach(c=>html+=`<th>${c.split('[').pop().replace(']','')}</th>`);
+    html+=`</tr></thead><tbody>`;
+    rows.forEach(r=>{html+='<tr>';cols.forEach(c=>html+=`<td>${r[c]??'—'}</td>`);html+='</tr>';});
+    html+='</tbody></table>';
+    addAgentMessage(html);
+  } catch {}
+}
+
+function quickAsk(text) { document.getElementById('chat-input').value=text; sendMessage(); }
+function focusLotInput() {
+  const i=document.getElementById('chat-input');
+  i.value='Show me all information for Lot ';
+  i.focus(); i.setSelectionRange(i.value.length,i.value.length);
+}
+function handleKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();} }
+function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function renderMarkdown(t) {
+  return t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g,'<em>$1</em>')
+          .replace(/`(.*?)`/g,'<code>$1</code>')
+          .replace(/\n/g,'<br>');
+}
+
+// Only auto-show login modal when NOT in sandbox
+window.addEventListener('load', () => {
+  if (!inSandbox) setTimeout(() => document.getElementById('modal-step1').classList.remove('hidden'), 600);
+});
+</script>
+
+</body>
+</html>
